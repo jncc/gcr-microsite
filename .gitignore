@@ -1,0 +1,7 @@
+obj/
+bin/
+.vs/
+output/search
+output/html
+venv
+*.sln
