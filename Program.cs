@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using JNCC.Microsite.GCR;
+using JNCC.Microsite.GCR.Data;
 using JNCC.Microsite.GCR.Generators;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -35,7 +35,7 @@ namespace JNCC.Microsite.GCR
             GeneratorConfig generatorConfig = new GeneratorConfig();
 
             var options = new OptionSet {
-                //{ "u|update=", "run data update from Database and generate outputs", u => {update = true; accessDbPath = u;}},
+                { "u|update=", "run data update from Database and generate outputs", u => {update = true; accessDbPath = u;}},
                 { "g|generate", "generate web pages from extracted data", g => generate = true},
                 //{ "a|analytics=", "google analytics id", a => generatorConfig.GoogleAnalyticsId = a},
                 //{ "t|tag=", "google tag manager id", t => generatorConfig.GoogleTagMangerId = t},
@@ -69,18 +69,18 @@ namespace JNCC.Microsite.GCR
                 return;
             }
 
-            //if (update)
-            //{
-            //    if (String.IsNullOrWhiteSpace(accessDbPath))
-            //    {
-            //        Console.Write("-u | --update option must have a non blank value");
+            if (update)
+            {
+                if (String.IsNullOrWhiteSpace(accessDbPath))
+                {
+                    Console.Write("-u | --update option must have a non blank value");
 
-            //    }
-            //    else
-            //    {
-            //        DatabaseExtractor.ExtractData(accessDbPath, root);
-            //    }
-            //}
+                }
+                else
+                {
+                    DatabaseExtractor.ExtractData(accessDbPath, root);
+                }
+            }
 
             //if (generate || generateSearchDocuments)
             if (generate)
