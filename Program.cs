@@ -79,45 +79,24 @@ namespace JNCC.Microsite.GCR
                 }
                 else
                 {
-                    //DatabaseExtractor.ExtractData(accessDbPath, root);
+                    DatabaseExtractor.ExtractData(accessDbPath, root);
                 }
             }
 
             //if (generate || generateSearchDocuments)
             if (generate)
             {
-                //if (!String.IsNullOrEmpty(generatorConfig.GoogleAnalyticsId))
-                //{
-                //    Console.WriteLine("Enabling google analytics with ID {0}", generatorConfig.GoogleAnalyticsId);
-                //}
-
-                //if (!String.IsNullOrEmpty(generatorConfig.GoogleTagMangerId))
-                //{
-                //    Console.WriteLine("Enabling google tag manager with ID {0}", generatorConfig.GoogleTagMangerId);
-                //}
-
-                //Generator.MakeSite(generatorConfig, root, generateSearchDocuments, searchIndex);
-
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
+                if (!String.IsNullOrEmpty(generatorConfig.GoogleAnalyticsId))
                 {
-                    DataSource = "SQL-SPATIAL",
-                    InitialCatalog = "dev-biotope-db",
-                    IntegratedSecurity = true
-                };
-                using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
-                {
-                    using (SqlCommand command = new SqlCommand("SELECT BIOTOPE_KEY FROM WEB_BIOTOPE", conn))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Console.WriteLine($"{reader.GetString(0)}");
-                            }
-                        }
-                    }
+                    Console.WriteLine("Enabling google analytics with ID {0}", generatorConfig.GoogleAnalyticsId);
                 }
+
+                if (!String.IsNullOrEmpty(generatorConfig.GoogleTagMangerId))
+                {
+                    Console.WriteLine("Enabling google tag manager with ID {0}", generatorConfig.GoogleTagMangerId);
+                }
+
+                Generator.MakeSite(generatorConfig, root, generateSearchDocuments, searchIndex);
             }
 
             if (view)
