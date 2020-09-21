@@ -19,13 +19,13 @@ namespace JNCC.Microsite.GCR.Data
         {
             return new DatabaseConnection(_databasePath);
         }
-        public List<Site> GetFullGCRList()
+        public List<Site> GetSiteList()
         {
-            List<Site> gcrs = new List<Site> { };
+            var gcrs = new List<Site>();
 
             using (DatabaseConnection conn = GetDatabaseconnection())
             {
-                string queryString = "SELECT " +
+                var queryString = "SELECT " +
                     "g.GCR_NUMBER, g.GCR_NAME, g.GCR_BLOCK_CODE, b.BLOCK_NAME, g.GRID_REF, g.LATITUDE, g.LONGITUDE, g.FILE_LINK, a.ADMIN_AREA, c.Country, b.INTRODUCTION, v.TITLE, v.AUTHORS " +
                     "FROM (((GCR g " +
                     "INNER JOIN Admin_area a ON g.GCR_NUMBER=a.GCR_NUMBER) " +
@@ -41,7 +41,8 @@ namespace JNCC.Microsite.GCR.Data
                         {
                             Code = reader.GetInt32(0),
                             Name = reader.GetString(1),
-                            Block = reader.IsDBNull(2) ? null : new Block { Code = reader.GetString(2), Name = reader.GetString(3) },
+                            BlockCode = reader.IsDBNull(2) ? null : reader.GetString(2),
+                            BlockName = reader.GetString(3),
                             GridReference = reader.IsDBNull(4) ? null : reader.GetString(4),
                             Latitude = reader.IsDBNull(5) ? null : (double?)reader.GetDouble(5),
                             Longitude = reader.IsDBNull(6) ? null : (double?)reader.GetDouble(6),
@@ -56,27 +57,44 @@ namespace JNCC.Microsite.GCR.Data
                             }
                         });
                     }
+                }
+            }
+            
+            return gcrs;
+        }
+        
+        public List<Block> GetBlockList()
+        {
+            var blocks = new List<Block>();
 
+            using (DatabaseConnection conn = GetDatabaseconnection())
+            {
+                var queryString = "SELECT " +
+                    "b.GCR_BLOCK_CODE, b.BLOCK_NAME, b.DEFINITION, v.TITLE, v.AUTHORS, b.INTRODUCTION " +
+                    "FROM block b " +
+                    "INNER JOIN volume v on v.VOL_NUMBER=b.VOL_NUMBER";
+                OdbcCommand cmd = conn.CreateCommand(queryString);
+                using (OdbcDataReader reader = conn.RunCommand(cmd))
+                {
+                    while (reader.Read())
+                    {
+                        blocks.Add(new Block
+                        {
+                            Code = reader.GetString(0),
+                            Name = reader.GetString(1),
+                            Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                            Publication = new Publication
+                            {
+                                Title = reader.GetString(3),
+                                Authors = reader.IsDBNull(4) ? null : reader.GetString(4), // TODO: remove the null check once the data is cleaned
+                                VolumeFilePath = reader.IsDBNull(5) ? null : reader.GetString(5)
+                            }
+                        });
+                    }
                 }
             }
 
-            //foreach (Site site in gcrs)
-            //{
-            //    using (DatabaseConnection conn = GetDatabaseconnection())
-            //    {
-            //        string queryString = $"SELECT ADMIN_AREA FROM Admin_area WHERE GCR_NUMBER={site.Code}";
-            //        OdbcCommand cmd = conn.CreateCommand(queryString);
-            //        using (OdbcDataReader reader = cmd.ExecuteReader())
-            //        {
-            //            reader.Read();
-            //            string unitaryAuthority = reader.IsDBNull(0) ? null : reader.GetString(0);
-            //            Console.Out.WriteLine($"Site: {site.Code}, unitary authority: {unitaryAuthority}");
-            //            site.UnitaryAuthority = unitaryAuthority;
-            //        }
-            //    }
-            //}
-
-            return gcrs;
+            return blocks;
         }
     }
 }

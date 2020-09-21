@@ -6,14 +6,14 @@ namespace JNCC.Microsite.GCR.Models.Data
 {
     public class Site
     {
-        // GCR site details
         public int Code { get; set; }
         public string Name { get; set; }
         public string UnitaryAuthority { get; set; }
         public string Country { get; set; }
         public string GridReference { get; set; }
         public string ReportFilePath { get; set; }
-        public Block Block { get; set; }
+        public string BlockCode { get; set; }
+        public string BlockName { get; set; }
         public Publication Publication { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
@@ -23,6 +23,9 @@ namespace JNCC.Microsite.GCR.Models.Data
     {
         public string Code { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public Publication Publication { get; set; }
+        public List<Site> Sites { get; set; }
     }
 
     public class Publication
